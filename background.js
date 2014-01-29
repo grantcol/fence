@@ -55,14 +55,20 @@ chrome.webRequest.onBeforeRequest.addListener(
   ["blocking"]);
 
 function notifyEndOfBreak() {
-  chrome.tabs.query({active: true}, 
-    function(tab){
-      chrome.tabs.highlight({tabs : tab.id}, function(){ console.log('highlighted'); });
-      //injectDetails -> alert the user that the break is over
+  chrome.tabs.query({ active : true }, 
+    function(tabs){
+      var injectable = "window.location.reload();";
+      console.log(tabs[0]);
+      chrome.tabs.executeScript(tabs[0].id, {code : injectable}, 
+        function(result){
+          console.log('injected');
+        });
   });
 }
+
 function getBlacklist() {
   chrome.storage.sync.get('blackList', function(items) {
     bl = items;
-  });
+    console.log(bl);
+});
 }

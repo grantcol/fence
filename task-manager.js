@@ -9,10 +9,10 @@
 
  	@author Grant Collins (@g_lecool)
  */
-
+var BREAK_MINUTES = 10; //global 
 var id; //keeps track of current id of tasks
 var breaks = 0;
-var breakTime = 10;
+var breakTime = BREAK_MINUTES;
 
 //b & t are global scope containers for break and task ratio values
 var b = null; // this is ugly
@@ -75,10 +75,6 @@ $(document).ready(function() {
 		document.getElementById('stat-report').innerHTML = generateReport(b, t);
 	});
 });
- /*$('.complete').click(function(){
- 	console.log("this element's id is "+this.id);
- 	removeTask(this.id);
- });*/
 
 /**
 	Core Methods (all of which are self explanitory)
@@ -89,7 +85,7 @@ function takeBreak() {
 	$("#break-ticker").html(breaks);
 	document.title = breakTime + "m";
 
-	setInterval(function() {
+	var bt = setInterval(function() {
 		 breakTime -= 1;
 		 var minutesLeft = breakTime;
 		 document.title = minutesLeft + "m";
@@ -100,10 +96,11 @@ function takeBreak() {
   				console.log(response.affirm);
   				setBreaks();
   				document.title = "ToDo";
-  				clearInverval();
+  				breakTime = BREAK_MINUTES;
+  				clearInterval(bt);
 			});
 		 }
-	}, 60000);
+	}, 1000);
 
 }
 
@@ -202,6 +199,7 @@ function removeTask(task_id) {
 		console.log('sucessfully deleted'); //will replace w/ alert soon!
 	});
 	completedTasks++;
+	console.log(completedTasks);
 }
 
 function getBreaks() {
@@ -244,7 +242,6 @@ function crunchStats(breaks, tasksComplete) {
 	} else {
 		totalTasks = 0;
 	}
-
 	var b_ratio = (breaks/totalBreaks) * 100;
 	if(b_ratio == 100){ b_ratio = 0; }
 	var t_ratio = 0;

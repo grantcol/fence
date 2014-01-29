@@ -6,7 +6,7 @@ $('#add-to-bl').click(function() {
 });
 
 function addToBlackList() {
-	var siteToBlock = $('#site-input').val();
+	var siteToBlock = $('#input-add').val();
 	blackList.push(siteToBlock);
 	chrome.storage.sync.set({ 'blackList' : blackList}, function() {
 		console.log('black list submitted');
