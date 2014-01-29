@@ -1,4 +1,29 @@
 //background.js 
+
+//the default ban list
+var bl =         ['*://www.youtube.com/', 
+                  '*://www.twitter.com/',
+                  '*://www.facebook.com/',
+                  '*://www.tumblr.com/',
+                  '*://www.reddit.com/',
+                  '*://www.instagram.com/',
+                  '*://www.netflix.com/', 
+                  '*://www.blogspot.com/',
+                  '*://www.pintrest.com/',
+                  '*://www.flickr.com/'];
+
+//special bl is just for me before deployment
+var special_bl = ["*://www.youtube.com/", 
+                  "*://www.twitter.com/", 
+                  "*://www.tumblr.com/", 
+                  "*://www.hckrnews.com/",
+                  "*://www.hackernews.com/", 
+                  "*://www.illroots.com/",
+                  "*://www.hypebeast.com/",
+                  "*://www.techcrunch.com/",
+                  "*://www.netflix.com/", 
+                  "*://www.google.com/"];
+
 var NUM_BREAKS = 3;
 var ON_BREAK = false; //ugly boolean but enums are uglier in js...
 
@@ -26,16 +51,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       return {cancel: true}; 
     }
   },
-  {urls: ["*://www.youtube.com/", 
-          "*://www.twitter.com/", 
-          "*://www.tumblr.com/", 
-          "*://www.hckrnews.com/",
-          "*://www.hackernews.com/", 
-          "*://www.illroots.com/",
-          "*://www.hypebeast.com/",
-          "*://www.techcrunch.com/",
-          "*://www.netflix.com/", 
-          "*://www.google.com/"]},
+  {urls: special_bl},
   ["blocking"]);
 
 function notifyEndOfBreak() {
@@ -43,5 +59,10 @@ function notifyEndOfBreak() {
     function(tab){
       chrome.tabs.highlight({tabs : tab.id}, function(){ console.log('highlighted'); });
       //injectDetails -> alert the user that the break is over
+  });
+}
+function getBlacklist() {
+  chrome.storage.sync.get('blackList', function(items) {
+    bl = items;
   });
 }
