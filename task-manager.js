@@ -1,5 +1,5 @@
  /**
- 	taskmanager.js
+ 	task-manager.js
  	--------------
  	Simple script to handle
  	1.break timings

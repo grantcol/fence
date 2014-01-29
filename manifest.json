@@ -11,7 +11,7 @@
     "scripts": ["jquery-1.10.2.js","background.js"]
   },
   "chrome_url_overrides" : {
-    "newtab": "popup.html"
+    "newtab": "fence.html"
   },
   "content_scripts": [ {
     "js": [ "jquery-1.10.2.js"],
