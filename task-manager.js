@@ -13,12 +13,17 @@
 var id; //keeps track of current id of tasks
 var breaks = 0;
 var breakTime = 10;
+
+//b & t are global scope containers for break and task ratio values
+var b = null; // this is ugly
+var t = null; //so is this i hate it
 var currentTasks = new Array(); 
 var ld = true;
 if(ld == true) { 
 	breaks = 3; 
 	setBreaks();
 }
+
 
 chrome.storage.sync.get(null,
 	function(items){ 
@@ -53,11 +58,21 @@ chrome.storage.sync.get(null,
   		}
 	});
   });
+ $('#stats-toggle-btn').click(function(){
+ 	var stats = crunchStats(breaks, 1);
+ 	b = stats['break_ratio'];
+ 	t = stats['task_ratio'];
+	var data = [ {value: stats['break_ratio'], color: "#F7464A"}, 
+				 {value: stats['task_ratio'], color: "#3498db"} ];
+	var ctx = $("#stats-box").get(0).getContext("2d");
+	var stats = new Chart(ctx).Doughnut(data);
+	document.getElementById('stat-report').innerHTML = generateReport(b, t);
+ });
 
- $('.complete').click(function(){
+ /*$('.complete').click(function(){
  	console.log("this element's id is "+this.id);
  	removeTask(this.id);
- });
+ });*/
 
 /**
 	Core Methods (all of which are self explanitory)
@@ -209,13 +224,44 @@ function showNewWindow() {
 							"type" : "panel" });
 }
 
-function crunchStats() {
+function crunchStats(breaks, tasksComplete) {
 	//the only 'stats' we're interested in right now are 
 	//	1. the number of tasks completed/number of breaks taken	
+	var stats = new Object();
+	var totalBreaks = 3;
+	var totalTasks;
+
+	if(currentTasks != null) {
+		totalTasks = currentTasks.length;
+	} else {
+		totalTasks = 0;
+	}
+
+	var b_ratio = (breaks/totalBreaks) * 100;
+	if(b_ratio == 100){ b_ratio = 0; }
+	var t_ratio = (tasksComplete/totalTasks) * 100;
+	console.log("b: "+b_ratio+" t: "+t_ratio);
+	stats['task_ratio'] = t_ratio;
+	stats['break_ratio'] = b_ratio; 
+	return stats;
 }
 
 function formatDate(date) {
+	
 	var temp = date.toString().split(' ');
 	date = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3];
 	return date;
+}
+
+function generateReport(b_ratio, t_ratio){
+
+	var report = "You've completed "+t_ratio+"% of your tasks and used "+b_ratio+"% of your breaks. ";
+	if(t_ratio > b_ratio) {
+		report += "Keep it up!";
+	} else if(t_ratio < b_ratio) {
+		report += "Get to work!";
+	} else {
+		report += "Your walking the line between productivity and procrastination...";
+	}
+	return report;
 }

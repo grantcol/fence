@@ -58,7 +58,7 @@
               	<small>
               		<a href="#" id="take-break-btn">Break</a> | 
               		<a href="#" data-toggle="modal" data-target="#new-task-modal">New</a> |
-                	<a href="#" data-toggle="modal" data-target="#stats-modal"> Stats </a> |
+                	<a href="#" id="stats-toggle-btn" data-toggle="modal" data-target="#stats-modal"> Stats </a> |
                   <a href="#" id="clear-btn"> Clear </a> 
             	</small>
         	</p>
@@ -130,13 +130,15 @@
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		        <h4 class="modal-title" id="myModalLabel">New Task</h4>
+		        <h4 class="modal-title" id="myModalLabel">Stats!</h4>
 		      </div>
 		      <div class="modal-body">
-		      	<div id="stats-box"></div>
+		      	<canvas id="stats-box" width="350" height="350" style="margin-left: 18%;"></canvas>
+            <hr>
+            <p id="stat-report"></p>
 		      </div>
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-primary" data-dismiss="modal">Add a break</button>
+		        <button type="button" class="btn btn-primary" data-dismiss="modal">Get Back To It</button>
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->
@@ -151,6 +153,7 @@
     <script src="jquery-1.10.2.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="bootstrap/js/date-picker/js/bootstrap-datepicker.js"></script>
+    <script src="bootstrap/js/Chart.min.js"></script>
     <script src="task-manager.js"></script>
   </body>
 </html>
