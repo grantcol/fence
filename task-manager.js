@@ -18,7 +18,7 @@ var breakTime = 10;
 var b = null; // this is ugly
 var t = null; //so is this i hate it
 var currentTasks = new Array();
-var completedTasks = new Array(); 
+var completedTasks = 0;
 var ld = true;
 if(ld == true) { 
 	breaks = 3; 
@@ -65,7 +65,7 @@ $(document).ready(function() {
 		});
 	});
 	$('#stats-toggle-btn').click(function(){
-		var stats = crunchStats(breaks, 1);
+		var stats = crunchStats(breaks, completedTasks);
 		b = stats['break_ratio'];
 		t = stats['task_ratio'];
 		var data = [ {value: stats['break_ratio'], color: "#F7464A"}, 
@@ -201,6 +201,7 @@ function removeTask(task_id) {
 	chrome.storage.sync.set({tasks : currentTasks}, function() {
 		console.log('sucessfully deleted'); //will replace w/ alert soon!
 	});
+	completedTasks++;
 }
 
 function getBreaks() {
@@ -246,7 +247,10 @@ function crunchStats(breaks, tasksComplete) {
 
 	var b_ratio = (breaks/totalBreaks) * 100;
 	if(b_ratio == 100){ b_ratio = 0; }
-	var t_ratio = (tasksComplete/totalTasks) * 100;
+	var t_ratio = 0;
+	if(totalTasks != 0) {
+		t_ratio = (tasksComplete/totalTasks) * 100;
+	} 
 	console.log("b: "+b_ratio+" t: "+t_ratio);
 	stats['task_ratio'] = t_ratio;
 	stats['break_ratio'] = b_ratio; 
