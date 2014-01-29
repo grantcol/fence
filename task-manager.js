@@ -17,7 +17,8 @@ var breakTime = 10;
 //b & t are global scope containers for break and task ratio values
 var b = null; // this is ugly
 var t = null; //so is this i hate it
-var currentTasks = new Array(); 
+var currentTasks = new Array();
+var completedTasks = new Array(); 
 var ld = true;
 if(ld == true) { 
 	breaks = 3; 
@@ -37,37 +38,43 @@ chrome.storage.sync.get(null,
 /**
 	Gui Handlers
 */
- $('#date-picker').datepicker({});
+$(document).ready(function() {
 
- $('#clear-btn').click(function(){
- 	chrome.storage.sync.clear();
- });
+	$('#date-picker').datepicker({});
 
- $('#create-new-task-btn').click(function(){
- 	addTask();
- });
-
- $('#take-break-btn').click(function(){
-	chrome.runtime.sendMessage({directive: "unlock"}, function(response) {
-  		console.log(response.affirm);
-  		if(breaks > 0) { 
-  			takeBreak(); 
-  		} else {
-  			console.log("no more breaks"); //change this to an alert.
-  		}
+	$('#clear-btn').click(function(){
+		chrome.storage.sync.clear();
 	});
-  });
- $('#stats-toggle-btn').click(function(){
- 	var stats = crunchStats(breaks, 1);
- 	b = stats['break_ratio'];
- 	t = stats['task_ratio'];
-	var data = [ {value: stats['break_ratio'], color: "#F7464A"}, 
-				 {value: stats['task_ratio'], color: "#3498db"} ];
-	var ctx = $("#stats-box").get(0).getContext("2d");
-	var stats = new Chart(ctx).Doughnut(data);
-	document.getElementById('stat-report').innerHTML = generateReport(b, t);
- });
 
+	$('#create-new-task-btn').click(function(){
+		addTask();
+	});
+	$(document).on("click", ".list-group-item", function(){
+		console.log("clicked");
+		removeTask(this.id);
+	});
+
+	$('#take-break-btn').click(function(){
+		chrome.runtime.sendMessage({directive: "unlock"}, function(response) {
+				console.log(response.affirm);
+				if(breaks > 0) { 
+					takeBreak(); 
+				} else {
+					console.log("no more breaks"); //change this to an alert.
+				}
+		});
+	});
+	$('#stats-toggle-btn').click(function(){
+		var stats = crunchStats(breaks, 1);
+		b = stats['break_ratio'];
+		t = stats['task_ratio'];
+		var data = [ {value: stats['break_ratio'], color: "#F7464A"}, 
+					 {value: stats['task_ratio'], color: "#3498db"} ];
+		var ctx = $("#stats-box").get(0).getContext("2d");
+		var stats = new Chart(ctx).Doughnut(data);
+		document.getElementById('stat-report').innerHTML = generateReport(b, t);
+	});
+});
  /*$('.complete').click(function(){
  	console.log("this element's id is "+this.id);
  	removeTask(this.id);
@@ -152,10 +159,10 @@ function addTask() {
 	});
 
 	//add task to DOM
-	buildTask(cat, concern, due, desc);
+	buildTask(cat, concern, due, desc, id);
 }
 
-function buildTask(cat, concern, due, desc) {
+function buildTask(cat, concern, due, desc, id) {
 
 	//building vars
 	var listGroup = document.getElementById('task-list');
@@ -166,6 +173,7 @@ function buildTask(cat, concern, due, desc) {
 	//setup
 	newTask.setAttribute('class', 'list-group-item');
 	newTask.href = "#";
+	newTask.id = id;
 
 	catAndConcern.setAttribute('class', 'list-group-item-heading');
 	catAndConcern.innerHTML = cat+": "+concern+" <small>Due: "+due+"</small>";
