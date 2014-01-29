@@ -68,6 +68,7 @@ function takeBreak() {
   				console.log(response.affirm);
   				setBreaks();
   				document.title = "ToDo";
+  				clearInverval();
 			});
 		 }
 	}, 60000);
