@@ -1,0 +1,20 @@
+{
+  "name": "fence",
+  "version": "1.0",
+  "manifest_version": 2,
+
+  "description": "a naggy productivity extension",
+  "permissions": [ "tabs", "webRequest", "webRequestBlocking", "storage",
+    "<all_urls>" ],
+  "background": {
+    "persistent": true,
+    "scripts": ["jquery-1.10.2.js","background.js"]
+  },
+  "chrome_url_overrides" : {
+    "newtab": "popup.html"
+  },
+  "content_scripts": [ {
+    "js": [ "jquery-1.10.2.js"],
+    "matches": [ "http://*/*", "https://*/*"]
+  }]
+}
