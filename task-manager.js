@@ -13,28 +13,34 @@
 var id; //keeps track of current id of tasks
 var breaks = 0;
 var breakTime = 10;
-var currentTasks; 
+var currentTasks = new Array(); 
 var ld = true;
 if(ld == true) { 
 	breaks = 3; 
 	setBreaks();
 }
-chrome.storage.sync.get('tasks',
+
+chrome.storage.sync.get(null,
 	function(items){ 
-		currentTasks = items['tasks'];
-		getTasksAndBreaks(); 
+		if(items['tasks'] != null){
+			currentTasks = items['tasks'];
+			getTasksAndBreaks(); 
+		} else {
+			currentTasks = [];
+		}
 	});
 
 /**
 	Gui Handlers
 */
+ $('#date-picker').datepicker({});
+
+ $('#clear-btn').click(function(){
+ 	chrome.storage.sync.clear();
+ });
 
  $('#create-new-task-btn').click(function(){
  	addTask();
- });
-
- $("#remove-task-btn").click(function() {
- 	removeTask();
  });
 
  $('#take-break-btn').click(function(){
@@ -46,7 +52,12 @@ chrome.storage.sync.get('tasks',
   			console.log("no more breaks"); //change this to an alert.
   		}
 	});
-});
+  });
+
+ $('.complete').click(function(){
+ 	console.log("this element's id is "+this.id);
+ 	removeTask(this.id);
+ });
 
 /**
 	Core Methods (all of which are self explanitory)
@@ -76,7 +87,7 @@ function takeBreak() {
 }
 
 function getTasksAndBreaks() { 
-	if(currentTasks.length < 1 || currentTasks == null) {
+	if( currentTasks == null || currentTasks.length < 1 ) {
 		id = 0;
 	} else {
 		id = currentTasks.length;
@@ -106,7 +117,8 @@ function addTask() {
 	//form vars
 	var cat = $("#input-category").val();
 	var concern = $("#input-concerned").val();
-	var due = $("#input-due").val();
+	var date = $('#date-picker').datepicker('getDate');
+	var due = formatDate(date);
 	var desc = $("#input-description").val();
 
 	//build an object w/ all props
@@ -142,7 +154,7 @@ function buildTask(cat, concern, due, desc) {
 	newTask.href = "#";
 
 	catAndConcern.setAttribute('class', 'list-group-item-heading');
-	catAndConcern.innerHTML = cat+": "+concern+" <small>Due "+due+"</small>";
+	catAndConcern.innerHTML = cat+": "+concern+" <small>Due: "+due+"</small>";
 
 	description.setAttribute('class', 'list-group-item-text');
 	description.innerHTML = desc;
@@ -199,8 +211,11 @@ function showNewWindow() {
 
 function crunchStats() {
 	//the only 'stats' we're interested in right now are 
-	//	1. the number of breaks taken vs time worked 
-	//  2. the number of breaks awarded for the above ratio
-	//  3. when calendar/csv's are implemented how much you worked 
-	//     in relation to how much time you had between obligations 	
+	//	1. the number of tasks completed/number of breaks taken	
+}
+
+function formatDate(date) {
+	var temp = date.toString().split(' ');
+	date = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3];
+	return date;
 }

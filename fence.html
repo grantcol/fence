@@ -16,7 +16,7 @@
 
     <!-- Custom styles for this template -->
     <link href="bootstrap/css/jumbotron-narrow.css" rel="stylesheet">
-
+    <link href="bootstrap/js/date-picker/css/datepicker3.css" rel="stylesheet">
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -35,6 +35,9 @@
   .complete-btn {
   	display: block;
   	max-width: 100%;
+  }
+  .complete {
+
   }
   </style>
   <body>
@@ -55,7 +58,8 @@
               	<small>
               		<a href="#" id="take-break-btn">Break</a> | 
               		<a href="#" data-toggle="modal" data-target="#new-task-modal">New</a> |
-                	<a href="#" data-toggle="modal" data-target="#stats-modal"> Stats </a>
+                	<a href="#" data-toggle="modal" data-target="#stats-modal"> Stats </a> |
+                  <a href="#" id="clear-btn"> Clear </a> 
             	</small>
         	</p>
             </span>
@@ -98,11 +102,12 @@
 				    </div>
 				  </div>
 				  <div class="form-group">
-				    <label for="input-due" class="col-sm-2 control-label">Due</label>
+				    <label for="date-picker" class="col-sm-2 control-label">Due</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" id="input-due" placeholder="When is this due?">
+				      <input type="text" class="form-control" id="date-picker" placeholder="When is this due?">
 				    </div>
 				  </div>
+
 				  <div class="form-group">
 				  	<label for="input-description" class="col-sm-2 control-label">Description</label>
 				    <div class="col-sm-10">
@@ -145,6 +150,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="jquery-1.10.2.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="popup.js"></script>
+    <script src="bootstrap/js/date-picker/js/bootstrap-datepicker.js"></script>
+    <script src="task-manager.js"></script>
   </body>
 </html>
