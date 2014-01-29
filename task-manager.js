@@ -24,7 +24,6 @@ if(ld == true) {
 	setBreaks();
 }
 
-
 chrome.storage.sync.get(null,
 	function(items){ 
 		if(items['tasks'] != null){
@@ -247,7 +246,7 @@ function crunchStats(breaks, tasksComplete) {
 }
 
 function formatDate(date) {
-	
+
 	var temp = date.toString().split(' ');
 	date = temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3];
 	return date;
@@ -255,7 +254,7 @@ function formatDate(date) {
 
 function generateReport(b_ratio, t_ratio){
 
-	var report = "You've completed "+t_ratio+"% of your tasks and used "+b_ratio+"% of your breaks. ";
+	var report = "You've completed "+Math.ceil(t_ratio)+"% of your tasks and used "+Math.ceil(b_ratio)+"% of your breaks. ";
 	if(t_ratio > b_ratio) {
 		report += "Keep it up!";
 	} else if(t_ratio < b_ratio) {

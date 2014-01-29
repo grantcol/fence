@@ -2,7 +2,7 @@
   "name": "fence",
   "version": "1.0",
   "manifest_version": 2,
-
+  "options_page": "options.html",
   "description": "a naggy productivity extension",
   "permissions": [ "tabs", "webRequest", "webRequestBlocking", "storage",
     "<all_urls>" ],
