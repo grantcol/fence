@@ -50,10 +50,6 @@ $(document).ready(function() {
 	$('#create-new-task-btn').click(function(){
 		addTask();
 	});
-	/*$(document).on("click", ".list-group-item", function(){
-		console.log("clicked");
-		removeTask(this.id);
-	});*/
 
 	$('#take-break-btn').click(function(){
 		chrome.runtime.sendMessage({directive: "unlock"}, function(response) {
@@ -65,6 +61,7 @@ $(document).ready(function() {
 				}
 		});
 	});
+
 	$('#stats-toggle-btn').click(function(){
 		var stats = crunchStats(breaks, completedTasks);
 		b = stats['break_ratio'];
@@ -98,7 +95,6 @@ $(document).ready(function() {
 	});
 
 	$(document).on("click", ".killbtn", function(){
-		console.log("clicked");
 		removeTask(this.id);
 	});
 });
@@ -257,8 +253,10 @@ function buildTask(cat, concern, due, desc, id, pc) {
 function removeTask(task_id) {
 	//a temporary and sloppy solution 
 	var indexToRemove;
+	var kill_id = task_id.split('_')[1];
+	console.log(kill_id);
 	for(var i = 0; i < currentTasks.length; i++) {
-		if(currentTasks[i]['task_id'] == task_id) {
+		if(currentTasks[i]['task_id'] == kill_id) {
 			indexToRemove = i;
 			break;
 		}
