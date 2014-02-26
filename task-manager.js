@@ -17,6 +17,7 @@ var breakTime = BREAK_MINUTES;
 //b & t are global scope containers for break and task ratio values
 var b = null; // this is ugly
 var t = null; //so is this i hate it
+var currentTask = null;
 var currentTasks = new Array();
 var completedTasks = 0;
 var ld = true;
@@ -49,10 +50,10 @@ $(document).ready(function() {
 	$('#create-new-task-btn').click(function(){
 		addTask();
 	});
-	$(document).on("click", ".list-group-item", function(){
+	/*$(document).on("click", ".list-group-item", function(){
 		console.log("clicked");
 		removeTask(this.id);
-	});
+	});*/
 
 	$('#take-break-btn').click(function(){
 		chrome.runtime.sendMessage({directive: "unlock"}, function(response) {
@@ -74,11 +75,43 @@ $(document).ready(function() {
 		var stats = new Chart(ctx).Doughnut(data);
 		document.getElementById('stat-report').innerHTML = generateReport(b, t);
 	});
+
+	$(document).on("click", ".startbtn", function(){
+		console.log("clicked");
+		startTask(this.id);
+	});
+
+	$(document).on("click", ".pausebtn", function(){
+		console.log("clicked");
+		if (confirm('Would you like to take a break before moving on?')) {
+		   	chrome.runtime.sendMessage({directive: "unlock"}, function(response) {
+				console.log(response.affirm);
+				if(breaks > 0) { 
+					takeBreak(); 
+				} else {
+					alert("Sorry, no more breaks. Get to work"); //change this to an alert.
+				}
+			});
+		} else {
+		    // Do nothing!
+		}
+	});
+
+	$(document).on("click", ".killbtn", function(){
+		console.log("clicked");
+		removeTask(this.id);
+	});
 });
 
 /**
 	Core Methods (all of which are self explanitory)
 */
+function startTask(id) {
+	var start_id = id.split('_')[1];
+	console.log("started task "+start_id);
+	currentTask = start_id;
+}
+
 function takeBreak() {
 
 	breaks-=1;
@@ -100,7 +133,7 @@ function takeBreak() {
   				clearInterval(bt);
 			});
 		 }
-	}, 1000);
+	}, 60000);
 
 }
 
@@ -125,7 +158,8 @@ function showTasks(listOfTasks) {
 					listOfTasks[i]['category'], 
 				  	listOfTasks[i]['concern'], 
 				  	listOfTasks[i]['due'], 
-				  	listOfTasks[i]['desc']
+				  	listOfTasks[i]['desc'],
+				  	listOfTasks[i]['task_id']
 				  );
 	}
 }
@@ -146,6 +180,7 @@ function addTask() {
 	task.due = due;
 	task.desc = desc;
 	task.task_id = id;
+	task.percentComplete = 0;
 	id++;
 
 	currentTasks.push(task);
@@ -156,20 +191,25 @@ function addTask() {
 	});
 
 	//add task to DOM
-	buildTask(cat, concern, due, desc, id);
+	buildTask(cat, concern, due, desc, id, 0);
 }
 
-function buildTask(cat, concern, due, desc, id) {
+function buildTask(cat, concern, due, desc, id, pc) {
 
 	//building vars
 	var listGroup = document.getElementById('task-list');
-	var newTask = document.createElement('a');
+	var newTask = document.createElement('div');
 	var catAndConcern = document.createElement('h4');
 	var description = document.createElement('p');
+	var progress = document.createElement('div');
+	var pbar = document.createElement('div');
+	var start = document.createElement('a');
+	var done = document.createElement('a');
+	var pause = document.createElement('a');
+	var group = document.createElement('div');
 
 	//setup
 	newTask.setAttribute('class', 'list-group-item');
-	newTask.href = "#";
 	newTask.id = id;
 
 	catAndConcern.setAttribute('class', 'list-group-item-heading');
@@ -178,9 +218,39 @@ function buildTask(cat, concern, due, desc, id) {
 	description.setAttribute('class', 'list-group-item-text');
 	description.innerHTML = desc;
 
+	progress.setAttribute('class', 'progress');
+	progress.setAttribute('style', 'margin-top:5px;');
+
+	pbar.id = "progress_"+id;
+	pbar.setAttribute('class', 'progress-bar progress-bar-success');
+	pbar.setAttribute('role', 'progressbar');
+	pbar.setAttribute('aria-valuenow', pc);
+	pbar.setAttribute('aria-valuemin', '0');
+	pbar.setAttribute('aria-valuemax', '100');
+	pbar.setAttribute('style', 'width:0;');
+
+	start.setAttribute('class', 'btn btn-default btn-xs startbtn');
+	start.id = "start_"+id;
+	start.innerHTML = "Start task";
+	pause.setAttribute('class', 'btn btn-default btn-xs pausebtn');
+	pause.id = "pause_"+id;
+	pause.innerHTML = "Pause task";
+	done.setAttribute('class', 'btn btn-default btn-xs killbtn');
+	done.id = "kill_"+id;
+	done.innerHTML = "Kill task";
+
+	group.setAttribute('class', 'btn-group');
+	group.setAttribute('style', 'margin-top: 10px; margin-bottom: 10px;');
+
 	//assemble
+	group.appendChild(start);
+	group.appendChild(pause);
+	group.appendChild(done);
+	progress.appendChild(pbar);
 	newTask.appendChild(catAndConcern);
 	newTask.appendChild(description);
+	newTask.appendChild(group);
+	newTask.appendChild(progress);
 	listGroup.appendChild(newTask);
 }
 
@@ -196,6 +266,7 @@ function removeTask(task_id) {
 	var removed = currentTasks.splice(indexToRemove, 1);
 	console.log(removed);
 	chrome.storage.sync.set({tasks : currentTasks}, function() {
+		alert("task completed!");
 		console.log('sucessfully deleted'); //will replace w/ alert soon!
 	});
 	completedTasks++;
