@@ -172,7 +172,6 @@ function showTasks(listOfTasks) {
 				  	listOfTasks[i]['task_id'],
 				  	listOfTasks[i]['percentComplete']
 				  );
-		console.log(listOfTasks[i]['percentComplete']);
 	}
 }
 
@@ -191,9 +190,9 @@ function addTask() {
 	task.concern = concern;
 	task.due = due;
 	task.desc = desc;
-	task.task_id = id;
+	task.task_id = nextId(currentTasks);
 	task.percentComplete = 0;
-	id++;
+	id = task.task_id;
 
 	currentTasks.push(task);
 
@@ -364,7 +363,19 @@ function generateReport(b_ratio, t_ratio){
 	}
 	return report;
 }
-
+function nextId(listOfTasks) {
+	if(listOfTasks.length > 0){
+		var big = listOfTasks[0]['task_id'];
+		for(var i = 0; i < listOfTasks.length; i++) {
+			if(listOfTasks[i]['task_id'] > big ) {
+				big = listOfTasks[i]['task_id'];
+			}
+		}
+	} else {
+		var big = 0;
+	}
+	return big+1;
+}
 function updateTask(id, pc) {
 	if(pc != null && pc != 0) {
 		for(var i=0; i < currentTasks.length; i++) {
