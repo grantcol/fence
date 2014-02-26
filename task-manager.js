@@ -78,6 +78,11 @@ $(document).ready(function() {
 		startTask(this.id);
 	});
 
+	$(document).on("click", ".markbtn", function(){
+		var percent = prompt("How much have you finished? (i.e. 20% )");
+		markTask(this.id, percent);
+	});
+
 	$(document).on("click", ".pausebtn", function(){
 		console.log("clicked");
 		if (confirm('Would you like to take a break before moving on?')) {
@@ -106,6 +111,15 @@ function startTask(id) {
 	var start_id = id.split('_')[1];
 	console.log("started task "+start_id);
 	currentTask = start_id;
+}
+
+function markTask(id, percent) {
+	var mark_id = "progress_"+id.split('_')[1];
+	var task_id = id.split('_')[1];
+	var width = percent+"%";
+	var mark_progress = document.getElementById(mark_id);
+	mark_progress.style.width = width;
+	updateTask(task_id, percent);
 }
 
 function takeBreak() {
@@ -155,8 +169,10 @@ function showTasks(listOfTasks) {
 				  	listOfTasks[i]['concern'], 
 				  	listOfTasks[i]['due'], 
 				  	listOfTasks[i]['desc'],
-				  	listOfTasks[i]['task_id']
+				  	listOfTasks[i]['task_id'],
+				  	listOfTasks[i]['percentComplete']
 				  );
+		console.log(listOfTasks[i]['percentComplete']);
 	}
 }
 
@@ -191,7 +207,8 @@ function addTask() {
 }
 
 function buildTask(cat, concern, due, desc, id, pc) {
-
+	var pcInt = parseInt(pc);
+	console.log("task is "+pcInt+"completed");
 	//building vars
 	var listGroup = document.getElementById('task-list');
 	var newTask = document.createElement('div');
@@ -202,6 +219,7 @@ function buildTask(cat, concern, due, desc, id, pc) {
 	var start = document.createElement('a');
 	var done = document.createElement('a');
 	var pause = document.createElement('a');
+	var mark = document.createElement('a');
 	var group = document.createElement('div');
 
 	//setup
@@ -220,10 +238,10 @@ function buildTask(cat, concern, due, desc, id, pc) {
 	pbar.id = "progress_"+id;
 	pbar.setAttribute('class', 'progress-bar progress-bar-success');
 	pbar.setAttribute('role', 'progressbar');
-	pbar.setAttribute('aria-valuenow', pc);
+	pbar.setAttribute('aria-valuenow', pcInt);
 	pbar.setAttribute('aria-valuemin', '0');
 	pbar.setAttribute('aria-valuemax', '100');
-	pbar.setAttribute('style', 'width:0;');
+	pbar.style.width = pc+"%";
 
 	start.setAttribute('class', 'btn btn-default btn-xs startbtn');
 	start.id = "start_"+id;
@@ -234,12 +252,16 @@ function buildTask(cat, concern, due, desc, id, pc) {
 	done.setAttribute('class', 'btn btn-default btn-xs killbtn');
 	done.id = "kill_"+id;
 	done.innerHTML = "Kill task";
+	mark.setAttribute('class', 'btn btn-default btn-xs markbtn');
+	mark.id = "mark_"+id;
+	mark.innerHTML = "Mark task";
 
 	group.setAttribute('class', 'btn-group');
 	group.setAttribute('style', 'margin-top: 10px; margin-bottom: 10px;');
 
 	//assemble
 	group.appendChild(start);
+	group.appendChild(mark);
 	group.appendChild(pause);
 	group.appendChild(done);
 	progress.appendChild(pbar);
@@ -341,4 +363,19 @@ function generateReport(b_ratio, t_ratio){
 		report += "Your walking the line between productivity and procrastination...";
 	}
 	return report;
+}
+
+function updateTask(id, pc) {
+	if(pc != null && pc != 0) {
+		for(var i=0; i < currentTasks.length; i++) {
+			if(currentTasks[i]['task_id'] == id) {
+				currentTasks[i]['percentComplete'] = pc; 
+				console.log(currentTasks[i]['task_id']+" "+currentTasks[i]['percentComplete']); 
+				chrome.storage.sync.set({tasks : currentTasks}, function() {
+					console.log('updated');
+				});
+			}
+		}
+	}
+
 }
