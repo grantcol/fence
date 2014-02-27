@@ -141,7 +141,7 @@ function markTask(id, percent) {
 function takeBreak() {
 
 	breaks-=1;
-	$("#break-ticker").html(breaks);
+	//$("#break-ticker").html(breaks);
 	document.title = breakTime + "m";
 
 	var bt = setInterval(function() {
@@ -154,7 +154,7 @@ function takeBreak() {
 		 	chrome.runtime.sendMessage({directive: "lock"}, function(response) {
   				console.log(response.affirm);
   				setBreaks();
-  				document.title = "ToDo";
+  				document.title = "Tasks";
   				breakTime = BREAK_MINUTES;
   				clearInterval(bt);
 			});

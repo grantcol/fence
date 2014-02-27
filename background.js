@@ -1,7 +1,7 @@
 //background.js 
 
 //the default ban list
-var bl =         ['*://www.youtube.com/*', 
+var bl =         ['*://www.youtube.com/**', 
                   '*://www.twitter.com/',
                   '*://www.facebook.com/',
                   '*://www.tumblr.com/',
