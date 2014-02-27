@@ -13,7 +13,7 @@ var BREAK_MINUTES = 10; //global
 var id; //keeps track of current id of tasks
 var breaks = 0;
 var breakTime = BREAK_MINUTES;
-
+var enabled = true;
 //b & t are global scope containers for break and task ratio values
 var b = null; // this is ugly
 var t = null; //so is this i hate it
@@ -60,6 +60,19 @@ $(document).ready(function() {
 					console.log("no more breaks"); //change this to an alert.
 				}
 		});
+	});
+
+	$('#fence-btn').click(function(){
+		if(enabled == true) {
+			enabled = false;
+			alert("Bring down that fence!");
+			chrome.runtime.sendMessage({directive: "unlock"}, function(response) {});
+		}
+		else if(enabled == false){
+			enabled = true;
+			alert("The fence is up. All is quiet");
+			chrome.runtime.sendMessage({directive: "lock"}, function(response) {});
+		}
 	});
 
 	$('#stats-toggle-btn').click(function(){

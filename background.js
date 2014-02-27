@@ -59,10 +59,12 @@ function notifyEndOfBreak() {
     function(tabs){
       var injectable = "window.location.reload();";
       console.log(tabs[0]);
-      chrome.tabs.executeScript(tabs[0].id, {code : injectable}, 
-        function(result){
-          console.log('injected');
-        });
+      for(var i = 0; i < tabs.length; i++) {
+        chrome.tabs.executeScript(tabs[i].id, {code : injectable}, 
+          function(result){
+            console.log('injected');
+          });
+      }
   });
 }
 
