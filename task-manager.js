@@ -63,15 +63,18 @@ $(document).ready(function() {
 	});
 
 	$('#fence-btn').click(function(){
+		var fb = document.getElementById('fence-btn');
 		if(enabled == true) {
 			enabled = false;
-			alert("Bring down that fence!");
+			//alert("Bring down that fence!");
 			chrome.runtime.sendMessage({directive: "unlock"}, function(response) {});
+			fb.innerHTML = "Fence on";
 		}
 		else if(enabled == false){
 			enabled = true;
-			alert("The fence is up. All is quiet");
+			//alert("The fence is up. All is quiet");
 			chrome.runtime.sendMessage({directive: "lock"}, function(response) {});
+			fb.innerHTML = "Fence off";
 		}
 	});
 
