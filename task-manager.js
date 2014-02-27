@@ -259,7 +259,7 @@ function buildTask(cat, concern, due, desc, id, pc) {
 	group.setAttribute('style', 'margin-top: 10px; margin-bottom: 10px;');
 
 	//assemble
-	group.appendChild(start);
+	//group.appendChild(start);
 	group.appendChild(mark);
 	group.appendChild(pause);
 	group.appendChild(done);
