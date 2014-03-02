@@ -130,6 +130,7 @@ function startTask(id) {
 }
 
 function markTask(id, percent) {
+	percent = format(percent);
 	var mark_id = "progress_"+id.split('_')[1];
 	var task_id = id.split('_')[1];
 	var width = percent+"%";
@@ -404,5 +405,21 @@ function updateTask(id, pc) {
 			}
 		}
 	}
+}
+function format(pc) {
+	if(pc.indexOf("/") != -1) {
+		var nd = pc.split('/');
+		var num = parseInt(nd[0]);
+		var denom = parseInt(nd[1]);
+		var quot = 0;
 
+		if(denom != 0)
+			quot = num / denom;
+
+		quot *= 100;
+
+		if(quot != 0) { pc = quot.toString(); }
+		console.log(pc);
+	}
+	return pc;
 }
